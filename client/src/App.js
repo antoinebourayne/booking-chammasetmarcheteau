@@ -27,7 +27,7 @@ function App() {
 
   const fetchDesks = () => {
     axios
-      .get('http://localhost:3001/api/availability')
+      .get(`${process.env.REACT_APP_API_URL}/api/availability`)
       .then(res => setDesks(res.data))
       .catch(err => console.error(err));
   };
@@ -49,7 +49,7 @@ function App() {
         <button
           onClick={() => {
             axios
-              .get(`http://localhost:3001/api/users?name=${encodeURIComponent(loginName)}`)
+              .get(`${process.env.REACT_APP_API_URL}/api/users?name=${encodeURIComponent(loginName)}`)
               .then(res => {
                 setCurrentUser(res.data);
                 setError('');
@@ -66,7 +66,7 @@ function App() {
 
   const handleBooking = async (deskId) => {
     try {
-      await axios.post('http://localhost:3001/api/bookings', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings`, {
         user_id: currentUser.id,
         desk_id: deskId
       });
