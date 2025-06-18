@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: booking
+      POSTGRES_PASSWORD: booking
+      POSTGRES_DB: booking_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  server:
+    build: ./server
+    container_name: booking-backend
+    environment:
+      DB_HOST: db
+      DB_USER: booking
+      DB_PASS: booking
+      DB_NAME: booking_db
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+  client:
+    build: ./client
+    container_name: booking-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
