@@ -37,17 +37,23 @@ app.get('/api/availability', async (req, res) => {
       res.json(data);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Error fetching availability');
+      res.status(500).send('Erreur de récupération des disponibilités');
     }
   });
   
-app.post('/api/bookings', async (req, res) => {
+  app.post('/api/bookings', async (req, res) => {
     const { user_id, desk_id, booking_date } = req.body;
     const date = booking_date || new Date().toISOString().split('T')[0];
   
-    const checkAvailabilityQuery = `
+    const checkDeskTakenQuery = `
       SELECT 1 FROM bookings
       WHERE desk_id = $1 AND booking_date = $2
+      LIMIT 1;
+    `;
+  
+    const checkUserAlreadyBookedQuery = `
+      SELECT 1 FROM bookings
+      WHERE user_id = $1 AND booking_date = $2
       LIMIT 1;
     `;
   
@@ -58,20 +64,46 @@ app.post('/api/bookings', async (req, res) => {
     `;
   
     try {
-      const existing = await db.query(checkAvailabilityQuery, [desk_id, date]);
+      const deskTaken = await db.query(checkDeskTakenQuery, [desk_id, date]);
+      if (deskTaken.rows.length > 0) {
+        return res.status(409).json({ error: 'Ce bureau est déjà pris pour cette date' });
+      }
   
-      if (existing.rows.length > 0) {
-        return res.status(409).json({ error: 'Desk is already booked for this date' });
+      const userAlreadyBooked = await db.query(checkUserAlreadyBookedQuery, [user_id, date]);
+      if (userAlreadyBooked.rows.length > 0) {
+        return res.status(409).json({ error: 'Vous avez déjà un bureau réservé pour cette date' });
       }
   
       const result = await db.query(insertBookingQuery, [user_id, desk_id, date]);
-  
       res.status(201).json(result.rows[0]);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Error creating booking');
+      res.status(500).send('Erreur de réservation');
     }
   });
+  
+
+  app.delete('/api/bookings', async (req, res) => {
+    const { user_id, desk_id, booking_date } = req.body;
+    const date = booking_date || new Date().toISOString().split('T')[0];
+  
+    try {
+      const result = await db.query(
+        'DELETE FROM bookings WHERE user_id = $1 AND desk_id = $2 AND booking_date = $3 RETURNING *;',
+        [user_id, desk_id, date]
+      );
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'No booking found to delete' });
+      }
+  
+      res.status(200).json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error deleting booking');
+    }
+  });
+  
   
 app.get('/api/users', async (req, res) => {
     const name = req.query.name;
@@ -79,12 +111,27 @@ app.get('/api/users', async (req, res) => {
   
     try {
       const result = await db.query('SELECT id, name FROM users WHERE name = $1', [name]);
-      if (result.rows.length === 0) return res.status(404).send('User not found');
+      if (result.rows.length === 0) return res.status(404).send('Utilisateur non trouvé');
       res.json(result.rows[0]);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Error checking user');
+      res.status(500).send('Erreur de récupération des utilisateurs');
     }
   });
+
+  app.post('/api/login', async (req, res) => {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'Le nom est requis' });
+  
+    try {
+      const result = await db.query('SELECT id, name FROM users WHERE name = $1', [name]);
+      if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Erreur authentification');
+    }
+  });
+  
   
 app.listen(3001, () => console.log('Server running on port 3001'));

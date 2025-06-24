@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { loginUser, fetchAvailability, bookDesk, deleteBooking } from './services/api';
+import Sidebar from './components/Sidebar';
+import DeskMap from './components/DeskMap';
+import CalendarPicker from './components/CalendarPicker';
 
 const deskLayout = [
   { id: 1, top: '9%', left: '16%' },
@@ -24,173 +27,76 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [loginName, setLoginName] = useState('');
   const [error, setError] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
-  const fetchDesks = () => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/availability`)
-      .then(res => setDesks(res.data))
-      .catch(err => console.error(err));
+  const loadDesks = () => fetchAvailability(selectedDate).then(res => setDesks(res.data)).catch(console.error);
+
+  useEffect(() => { if (currentUser) loadDesks(); }, [currentUser, selectedDate]);
+
+  const handleLogin = () => {
+    loginUser(loginName)
+      .then(res => { setCurrentUser(res.data); setError(''); })
+      .catch(err => setError(err.response?.data?.error || "Erreur de connexion"));
   };
 
-  useEffect(() => {
-    if (currentUser) fetchDesks();
-  }, [currentUser]);
+  const handleBooking = async (deskId) => {
+    try {
+      await bookDesk(currentUser.id, deskId, selectedDate);
+      setSelectedDesk(null);
+      loadDesks();
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors de la réservation');
+    }
+  };
+  
+  const handleDeleteBooking = async (deskId) => {
+    try {
+      await deleteBooking(currentUser.id, deskId, selectedDate);
+      setSelectedDesk(null);
+      loadDesks();
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors de l’annulation');
+    }
+  };  
 
   if (!currentUser) {
     return (
       <div style={{ textAlign: 'center', marginTop: '100px' }}>
         <h2>Se connecter</h2>
-        <input
-          type="text"
-          placeholder="Nom"
-          value={loginName}
-          onChange={(e) => setLoginName(e.target.value)}
-        />
-        <button
-          onClick={() => {
-            axios
-              .get(`${process.env.REACT_APP_API_URL}/api/users?name=${encodeURIComponent(loginName)}`)
-              .then(res => {
-                setCurrentUser(res.data);
-                setError('');
-              })
-              .catch(() => setError("Utilisateur non trouvé"));
-          }}
-        >
-          Valider
-        </button>
+        <input value={loginName} onChange={e => setLoginName(e.target.value)} placeholder="Nom" />
+        <button onClick={handleLogin}>Valider</button>
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
     );
   }
 
-  const handleBooking = async (deskId) => {
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings`, {
-        user_id: currentUser.id,
-        desk_id: deskId
-      });
-      setSelectedDesk(null);
-      fetchDesks();
-    } catch (err) {
-      alert('Erreur : ce bureau est déjà réservé');
-    }
-  };
-
   return (
-    <div style={{ display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{
-    width: '200px',
-    backgroundColor: '#333',
-    color: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: '1rem'
-  }}>
-    <div>
-      <h3>{currentUser.name}</h3>
-    </div>
-    <button 
-      onClick={() => {
-        setCurrentUser(null);
-        setLoginName('');
-        setError('');
-      }}
-    style={{
-      backgroundColor: '#555',
-      color: 'white',
-      border: 'none',
-      padding: '0.5rem',
-      cursor: 'pointer',
-      width: '100%'
-    }}>
-      Se déconnecter
-    </button>
-  </div>
-
-      {/* Main content */}
-      <div
-        style={{
-          position: 'relative',
-          width: 800,
-          height: 600,
-          margin: '2rem auto',
-          overflow: 'hidden',
-          backgroundColor: '#DAD0D0'
-        }}
-      >
-        <img
-          src="/ballu5.svg"
-          alt="Floor Plan"
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <CalendarPicker selectedDate={selectedDate} onChange={setSelectedDate} />
+      <div style={{ display: 'flex', width: '100%' }}>
+        <Sidebar
+          user={currentUser}
+          onLogout={() => {
+            setCurrentUser(null);
+            setLoginName('');
+            setError('');
           }}
         />
-
-        {deskLayout.map(desk => {
-          const status = desks.find(d => d.desk_id === desk.id);
-          const booked = status?.booked;
-          const userName = status?.user?.name;
-          const isSelected = selectedDesk === desk.id;
-
-          return (
-            <div
-              key={desk.id}
-              onClick={() => !booked && setSelectedDesk(desk.id)}
-              style={{
-                position: 'absolute',
-                top: desk.top,
-                left: desk.left,
-                width: '5%',
-                height: '4%',
-                backgroundColor: booked ? 'gray' : 'lightgreen',
-                border: '2px solid black',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: '0.7rem',
-                color: 'black',
-                textAlign: 'center',
-                padding: '2px',
-                cursor: booked ? 'default' : 'pointer'
-              }}
-            >
-              {booked ? userName : ''}
-              {isSelected && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleBooking(desk.id);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    top: '110%',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    backgroundColor: 'white',
-                    border: '1px solid black',
-                    borderRadius: '4px',
-                    padding: '2px 6px',
-                    fontSize: '0.7rem',
-                    cursor: 'pointer',
-                    zIndex: 2
-                  }}
-                >
-                  Réserver
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <DeskMap
+          desks={desks}
+          layout={deskLayout}
+          currentUser={currentUser}
+          selectedDesk={selectedDesk}
+          setSelectedDesk={setSelectedDesk}
+          handleBooking={handleBooking}
+          handleDelete={handleDeleteBooking}
+        />
       </div>
+      {error && (
+        <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>
+      )}
     </div>
   );
 }
