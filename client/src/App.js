@@ -7,26 +7,26 @@ import FloorSwitch from './components/FloorSwitch';
 
 const deskLayouts = {
   'ballu5_r2': [
-  { id: 1, top: '9%', left: '13%' },
-  { id: 2, top: '18%', left: '13%' },
-  { id: 3, top: '40%', left: '14%' },
-  { id: 4, top: '55%', left: '14%' },
-  { id: 5, top: '75%', left: '14%' },
-  { id: 6, top: '75%', left: '17%' },
-  { id: 7, top: '85%', left: '12%' },
-  { id: 8, top: '14%', left: '27%' },
+  { id: 1, top: '9%', left: '17%' },
+  { id: 2, top: '18%', left: '17%' },
+  { id: 3, top: '40%', left: '17%' },
+  { id: 4, top: '55%', left: '17%' },
+  { id: 5, top: '75%', left: '15%' },
+  { id: 6, top: '75%', left: '22%' },
+  { id: 7, top: '85%', left: '18%' },
+  { id: 8, top: '14%', left: '31%' },
   { id: 9, top: '14%', left: '43%' },
   { id: 10, top: '14%', left: '60%' },
-  { id: 11, top: '8%', left: '80%' },
+  { id: 11, top: '7%', left: '73%' },
   { id: 12, top: '45%', left: '35%' },
   { id: 13, top: '55%', left: '35%' },
   { id: 14, top: '48%', left: '61%' },
   ],
   'ballu5_r3': [
-  { id: 15, top: '9%', left: '13%' },
-  { id: 16, top: '40%', left: '13%' },
-  { id: 17, top: '55%', left: '13%' },
-  { id: 18, top: '80%', left: '15%' },
+  { id: 15, top: '9%', left: '17%' },
+  { id: 16, top: '40%', left: '17%' },
+  { id: 17, top: '55%', left: '17%' },
+  { id: 18, top: '80%', left: '17%' },
   ]
 };
 
