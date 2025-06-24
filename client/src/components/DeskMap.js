@@ -1,24 +1,28 @@
 import Desk from './Desk';
 
-function DeskMap({ desks, layout, currentUser, selectedDesk, setSelectedDesk, handleBooking, handleDelete }) {
+function DeskMap({ desks, layout, floorImage, currentUser, selectedDesk, setSelectedDesk, handleBooking, handleDelete, children }) {
   return (
     <div style={{
       position: 'relative',
-      width: 800,
-      height: 600,
-      margin: '2rem auto',
+      width: '100%',
+      maxWidth: '1000px',
+      height: '80vh',
+      margin: '0 auto',
+      paddingTop: '4rem',
       overflow: 'hidden',
       backgroundColor: '#DAD0D0'
     }}>
+      {children}
       <img
-        src="/ballu5.svg"
+        src={floorImage}
         alt="Floor Plan"
         style={{
           width: '100%',
           height: '100%',
           position: 'absolute',
           top: 0,
-          left: 0
+          left: 0,
+          zIndex: 0
         }}
       />
       {layout.map(desk => {
@@ -43,4 +47,5 @@ function DeskMap({ desks, layout, currentUser, selectedDesk, setSelectedDesk, ha
     </div>
   );
 }
+
 export default DeskMap;

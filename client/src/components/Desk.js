@@ -8,13 +8,17 @@ function Desk({ desk, booked, userName, currentUser, isSelected, onSelect, onBoo
           position: 'absolute',
           top: desk.top,
           left: desk.left,
-          width: '5%',
-          height: '4%',
-          backgroundColor: booked 
+          width: '6vw',
+          height: '6vw',
+          minWidth: '28px',
+          minHeight: '28px',
+          maxWidth: '50px',
+          maxHeight: '50px',
+          backgroundColor: booked
             ? isCurrentUser
               ? 'lightblue'
               : 'gray'
-           : 'lightgreen',
+            : 'lightgreen',
           border: '2px solid black',
           borderRadius: '8px',
           display: 'flex',
@@ -25,7 +29,8 @@ function Desk({ desk, booked, userName, currentUser, isSelected, onSelect, onBoo
           color: 'black',
           textAlign: 'center',
           padding: '2px',
-          cursor: booked && !isCurrentUser ? 'default' : 'pointer'
+          cursor: booked && !isCurrentUser ? 'default' : 'pointer',
+          zIndex: 1
         }}
       >
         {booked ? userName : ''}

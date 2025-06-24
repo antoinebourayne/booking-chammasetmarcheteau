@@ -39,24 +39,36 @@ VALUES
   ('Capucine', 'capucine@chammasetmarcheteau.com'),
   ('Noémie', 'noemie@chammasetmarcheteau.com'),
   ('Arys', 'arys@chammasetmarcheteau.com'),
-  ('Lola', 'lola@chammasetmarcheteau.com');
+  ('Lola', 'lola@chammasetmarcheteau.com'),
+  ('Christophe', 'christophe@chammasetmarcheteau.com'),
+  ('Denis', 'denis@chammasetmarcheteau.com');
 
 INSERT INTO desks (name, location)
 VALUES
-  ('Desk 1', 'Ballu 5 R2'),
-  ('Desk 2', 'Ballu 5 R2'),
-  ('Desk 3', 'Ballu 5 R2'),
-  ('Desk 4', 'Ballu 5 R2'),
-  ('Desk 5', 'Ballu 5 R2'),
-  ('Desk 6', 'Ballu 5 R2'),
-  ('Desk 7', 'Ballu 5 R2'),
-  ('Desk 8', 'Ballu 5 R2'),
-  ('Desk 9', 'Ballu 5 R2'),
-  ('Desk 10', 'Ballu 5 R2'),
-  ('Desk 11', 'Ballu 5 R2'),
-  ('Desk 12', 'Ballu 5 R2'),
-  ('Desk 13', 'Ballu 5 R2'),
-  ('Desk 14', 'Ballu 5 R2');
+  ('Desk 1', 'ballu5_r2'),
+  ('Desk 2', 'ballu5_r2'),
+  ('Desk 3', 'ballu5_r2'),
+  ('Desk 4', 'ballu5_r2'),
+  ('Desk 5', 'ballu5_r2'),
+  ('Desk 6', 'ballu5_r2'),
+  ('Desk 7', 'ballu5_r2'),
+  ('Desk 8', 'ballu5_r2'),
+  ('Desk 9', 'ballu5_r2'),
+  ('Desk 10', 'ballu5_r2'),
+  ('Desk 11', 'ballu5_r2'),
+  ('Desk 12', 'ballu5_r2'),
+  ('Desk 13', 'ballu5_r2'),
+  ('Desk 14', 'ballu5_r2'),
+  ('Desk 15', 'ballu5_r3'),
+  ('Desk 16', 'ballu5_r3'),
+  ('Desk 17', 'ballu5_r3'),
+  ('Desk 18', 'ballu5_r3'),
+  ('Desk 19', 'ballu5_r3'),
+  ('Desk 20', 'ballu5_r3'),
+  ('Desk 21', 'ballu5_r3'),
+  ('Desk 22', 'ballu5_r3'),
+  ('Desk 23', 'ballu5_r3'),
+  ('Desk 24', 'ballu5_r3');
 
 INSERT INTO bookings (user_id, desk_id, booking_date)
 VALUES
@@ -71,4 +83,6 @@ VALUES
   (5, 11, CURRENT_DATE),
   (11, 12, CURRENT_DATE),
   (12, 13, CURRENT_DATE),
-  (13, 14, CURRENT_DATE);
+  (13, 14, CURRENT_DATE),
+  (15, 15, CURRENT_DATE),
+  (16, 18, CURRENT_DATE);
