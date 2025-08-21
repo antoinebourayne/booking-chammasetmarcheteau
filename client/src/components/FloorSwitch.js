@@ -1,38 +1,26 @@
-function FloorSwitch({ currentFloor, onSwitch }) {
+function FloorSwitch({ floors = [], currentFloor, onChange }) {
+  const labels = {
+    ballu5_r2: "Ballu 5 – R2",
+    ballu5_r3: "Ballu 5 – R3",
+    ballu5_r4: "Ballu 5 – R4",
+    ballu5_rdc: "Ballu 5 – RDC",
+    ballu5_rdj: "Ballu 5 – RDJ",
+  };
+
   return (
-    <div style={{
-      position: 'absolute',
-      top: '1rem',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '0.3rem',
-      zIndex: 2,
-      marginTop: '-2rem'
-    }}>
-      <button onClick={onSwitch} style={btnStyle}>↑</button>
-      <div style={{
-        backgroundColor: 'white',
-        padding: '0.4rem 0.8rem',
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        border: '1px solid #ccc'
-      }}>
-        {currentFloor}
-      </div>
-      <button onClick={onSwitch} style={btnStyle}>↓</button>
+    <div style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem' }}>
+      <strong>{labels[currentFloor] || currentFloor}</strong>
+      <select
+        value={currentFloor}
+        onChange={(e) => onChange?.(e.target.value)}
+        style={{ padding:'0.25rem 0.5rem' }}
+        aria-label="Choisir l’étage"
+      >
+        {floors.map(f => (
+          <option key={f} value={f}>{labels[f] || f}</option>
+        ))}
+      </select>
     </div>
   );
 }
-
-const btnStyle = {
-  backgroundColor: '#eee',
-  border: '1px solid #aaa',
-  borderRadius: '4px',
-  padding: '0.3rem 0.6rem',
-  cursor: 'pointer'
-};
-
 export default FloorSwitch;
