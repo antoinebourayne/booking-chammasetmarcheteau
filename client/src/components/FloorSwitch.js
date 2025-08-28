@@ -1,10 +1,10 @@
 function FloorSwitch({ floors = [], currentFloor, onChange }) {
   const labels = {
+    ballu5_rdj: "Ballu 5 – RDJ",
+    ballu5_rdc: "Ballu 5 – RDC",
     ballu5_r2: "Ballu 5 – R2",
     ballu5_r3: "Ballu 5 – R3",
-    ballu5_r4: "Ballu 5 – R4",
-    ballu5_rdc: "Ballu 5 – RDC",
-    ballu5_rdj: "Ballu 5 – RDJ",
+    ballu5_r4: "Ballu 5 – R4"
   };
 
   return (

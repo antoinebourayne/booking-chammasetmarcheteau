@@ -21,7 +21,7 @@ import CalendarPicker from './components/CalendarPicker';
 import FloorSwitch from './components/FloorSwitch';
 
 /** Liste des étages disponibles */
-const floors = ['ballu5_r2', 'ballu5_r3', 'ballu5_r4', 'ballu5_rdc', 'ballu5_rdj'];
+const floors = ['ballu5_rdj','ballu5_rdc','ballu5_r2', 'ballu5_r3', 'ballu5_r4'];
 
 /** Fallback local des positions (si la DB n’a pas encore top/left pour un desk) */
 const deskLayouts = {
