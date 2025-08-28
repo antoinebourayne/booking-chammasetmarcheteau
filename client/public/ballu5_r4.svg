@@ -3,11 +3,10 @@
 <rect x="0.5" y="71.5" width="160" height="222" fill="#BDAFED" stroke="black"/>
 <rect x="0.5" y="301.5" width="160" height="250" fill="#BDAFED" stroke="black"/>
 <rect x="172.5" y="71.5" width="142" height="146" fill="#BDAFED" stroke="black"/>
-<rect x="325.5" y="71.5" width="140" height="146" fill="#BDAFED" stroke="black"/>
 <rect x="655.5" y="0.5" width="134" height="122" fill="#BDAFED" stroke="black"/>
-<rect x="476.5" y="71.5" width="143" height="146" fill="#BDAFED"/>
-<rect x="476.5" y="71.5" width="143" height="146" stroke="#070101"/>
-<rect x="476.5" y="71.5" width="143" height="146" stroke="black" stroke-opacity="0.2"/>
+<rect x="326.5" y="71.5" width="293" height="146" fill="#BDAFED"/>
+<rect x="326.5" y="71.5" width="293" height="146" stroke="#070101"/>
+<rect x="326.5" y="71.5" width="293" height="146" stroke="black" stroke-opacity="0.2"/>
 <rect x="231.5" y="317.5" width="163" height="182" fill="#BDAFED" stroke="black"/>
 <path d="M584 318.5V448.706L475 509.646V421.5H446.5V318.5H584Z" fill="#BDAFED"/>
 <path d="M584 318.5V448.706L475 509.646V421.5H446.5V318.5H584Z" stroke="black"/>

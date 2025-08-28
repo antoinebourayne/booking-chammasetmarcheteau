@@ -191,7 +191,7 @@ const popupStyle = {
   padding: '0.35rem 0.6rem',
   boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
   whiteSpace: 'nowrap',
-  zIndex: 10000
+  zIndex: 99999
 };
 
 export default Desk;
