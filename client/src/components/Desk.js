@@ -12,7 +12,7 @@ function Desk({
   onAdminDelete,
   onAdminAssign,
   onAdminRemoveDesk,
-  onBookSixMonths,
+  onOpenReserveDays,
   onBook
 }) {
   const [assignName, setAssignName] = useState('');
@@ -68,7 +68,7 @@ function Desk({
               <input
                 value={assignName}
                 onChange={(e) => setAssignName(e.target.value)}
-                placeholder="Nom du collaborateur"
+                placeholder="Initiales collaborateur"
                 style={{ width: '120px', fontSize: '0.75rem', padding: '2px 6px' }}
               />   
             </div>
@@ -100,21 +100,23 @@ function Desk({
               Réserver aujourd'hui
             </div>
 
-          <div
+            <div
               onClick={(e) => {
                 e.stopPropagation();
-                if (isAdmin) {
-                  if (assignName.trim() && typeof onBookSixMonths === 'function') {
-                    onBookSixMonths(desk.id, assignName.trim());
+                console.log('[Desk] click Réserver X jours', { isAdmin, assignName, deskId: desk.id }); // <---
+                if (typeof onOpenReserveDays === 'function') {
+                  if (isAdmin) {
+                    if (!assignName.trim()) {
+                      alert("Entrez un nom (existant en base) pour réserver pour un collaborateur.");
+                      return;
+                    }
+                    onOpenReserveDays(desk.id, assignName.trim()); // passer le collab saisi
                     setAssignName('');
                   } else {
-                    alert("Entrez un nom (existant en base) pour réserver pour un collaborateur.");
+                    onOpenReserveDays(desk.id); // user courant
                   }
-                } else {
-                  if (typeof onBookSixMonths === 'function') onBookSixMonths(desk.id);
                 }
               }}
-              
               style={{
                 cursor: 'pointer',
                 border: '1px solid #ddd',
@@ -123,8 +125,9 @@ function Desk({
                 textAlign: 'center'
               }}
             >
-              Réserver 6 mois
-        </div>
+              Réserver X jours
+            </div>
+
           {isAdmin && (
             <div
               onClick={(e) => {

@@ -15,7 +15,7 @@ function DeskMap({
   onAdminDelete,
   onAdminAssign,
   onAdminRemoveDesk,
-  handleBookingSixMonths,
+  onOpenReserveDays,
   children
 }) {
   const containerRef = useRef(null);
@@ -174,7 +174,7 @@ function DeskMap({
               onAdminDelete={onAdminDelete}
               onAdminAssign={onAdminAssign}
               onAdminRemoveDesk={onAdminRemoveDesk}
-              onBookSixMonths={handleBookingSixMonths}
+              onOpenReserveDays={onOpenReserveDays}
             />
           </div>
         );

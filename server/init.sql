@@ -27,26 +27,15 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Seed users
 INSERT INTO users (name, email) VALUES
-  ('Jérôme', 'jerome@chammasetmarcheteau.com'),
-  ('Héloïse', 'heloise@chammasetmarcheteau.com'),
-  ('Marion', 'marion@chammasetmarcheteau.com'),
-  ('Nicolas', 'nicolas@chammasetmarcheteau.com'),
-  ('Kamil', 'kamil@chammasetmarcheteau.com'),
-  ('Jeanne R', 'jeanne@chammasetmarcheteau.com'),
-  ('Julien', 'julien@chammasetmarcheteau.com'),
-  ('Raphaël', 'raphael@chammasetmarcheteau.com'),
-  ('Agathe', 'agathe@chammasetmarcheteau.com'),
-  ('Sandie', 'sandie@chammasetmarcheteau.com'),
-  ('Capucine', 'capucine@chammasetmarcheteau.com'),
-  ('Noémie', 'noemie@chammasetmarcheteau.com'),
-  ('Arys', 'arys@chammasetmarcheteau.com'),
-  ('Lola', 'lola@chammasetmarcheteau.com'),
-  ('Christophe', 'christophe@chammasetmarcheteau.com'),
-  ('Denis', 'denis@chammasetmarcheteau.com')
+  ('JX', 'jerome@chammasetmarcheteau.com'),
+  ('HX', 'heloise@chammasetmarcheteau.com'),
+  ('MX', 'marion@chammasetmarcheteau.com'),
+  ('NX', 'nicolas@chammasetmarcheteau.com'),
+  ('LC', 'lola@chammasetmarcheteau.com')
 ON CONFLICT (email) DO NOTHING;
 
 -- Make Lola admin
-UPDATE users SET role = 'admin' WHERE name = 'Lola';
+UPDATE users SET role = 'admin' WHERE name = 'LC';
 
 -- Seed desks (positions null par défaut : le front a un fallback)
 INSERT INTO desks (name, location) VALUES
@@ -75,14 +64,5 @@ VALUES
   (6, 2,  CURRENT_DATE),
   (7, 3,  CURRENT_DATE),
   (9, 4,  CURRENT_DATE),
-  (10, 5, CURRENT_DATE),
-  (4, 6,  CURRENT_DATE),
-  (2, 7,  CURRENT_DATE),
-  (1, 8,  CURRENT_DATE),
-  (5, 9,  CURRENT_DATE),
-  (11,10, CURRENT_DATE),
-  (12,11, CURRENT_DATE),
-  (13,12, CURRENT_DATE),
-  (15,13, CURRENT_DATE),
-  (16,14, CURRENT_DATE)
+  (10, 5, CURRENT_DATE)
 ON CONFLICT DO NOTHING;

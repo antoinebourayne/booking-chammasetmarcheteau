@@ -37,6 +37,9 @@ export const createBookingAdmin = (desk_id, booking_date, admin_user_id, target_
 export const deleteDeskAdmin = (desk_id, admin_user_id) =>
   API.delete(`/api/admin/desks/${desk_id}`, { data: { admin_user_id } });
 
+export const deleteUserAdmin = (user_id, admin_user_id) =>
+  API.delete(`/api/admin/users/${user_id}`, { data: { admin_user_id } });
+
 export const fetchAllUsers = () => API.get('/api/users/list');
 
 export const addUser = (name, email) => API.post('/api/users', { name, email });

@@ -1,26 +1,13 @@
-<svg width="669" height="682" viewBox="0 0 669 682" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="669" height="682" fill="#DAD0D0"/>
-<rect x="0.5" y="0.5" width="106" height="222" fill="#BDAFED" stroke="black"/>
-<rect x="0.5" y="230.5" width="126" height="250" fill="#BDAFED" stroke="black"/>
-<rect x="115.5" y="36.5" width="120" height="146" fill="#BDAFED" stroke="black"/>
-<rect x="244.5" y="36.5" width="120" height="146" fill="#BDAFED" stroke="black"/>
-<rect x="534.5" y="0.5" width="134" height="122" fill="#BDAFED" stroke="black"/>
-<rect x="373.5" y="36.5" width="152" height="159" fill="#BDAFED"/>
-<rect x="373.5" y="36.5" width="152" height="159" stroke="#070101"/>
-<rect x="373.5" y="36.5" width="152" height="159" stroke="black" stroke-opacity="0.2"/>
-<rect x="168.5" y="280.5" width="122" height="182" fill="#BDAFED" stroke="black"/>
-<path d="M525 281.5V411.706L416 472.646V384.5H387.5V281.5H525Z" fill="#BDAFED"/>
-<path d="M525 281.5V411.706L416 472.646V384.5H387.5V281.5H525Z" stroke="black"/>
-<path d="M525 281.5V411.706L416 472.646V384.5H387.5V281.5H525Z" stroke="black" stroke-opacity="0.2"/>
-<path d="M525 281.5V411.706L416 472.646V384.5H387.5V281.5H525Z" stroke="black" stroke-opacity="0.2"/>
-<path d="M138 489.5V619.706L28.3691 681H0.5V489.5H138Z" fill="#BDAFED"/>
-<path d="M138 489.5V619.706L28.3691 681H0.5V489.5H138Z" stroke="black"/>
-<path d="M138 489.5V619.706L28.3691 681H0.5V489.5H138Z" stroke="black" stroke-opacity="0.2"/>
-<path d="M138 489.5V619.706L28.3691 681H0.5V489.5H138Z" stroke="black" stroke-opacity="0.2"/>
-<rect x="589.5" y="152.5" width="79" height="128" fill="#80B17A" stroke="black"/>
-<rect x="594" y="181" width="70" height="70" fill="url(#pattern0_0_1)"/>
-<path d="M571.735 251.707C572.125 251.317 572.125 250.683 571.735 250.293L565.371 243.929C564.98 243.538 564.347 243.538 563.957 243.929C563.566 244.319 563.566 244.953 563.957 245.343L569.614 251L563.957 256.657C563.566 257.047 563.566 257.681 563.957 258.071C564.347 258.462 564.98 258.462 565.371 258.071L571.735 251.707ZM553 251V252H571.028V251V250H553V251Z" fill="black"/>
-<path d="M552.293 176.303C551.902 176.693 551.902 177.327 552.293 177.717L558.657 184.081C559.047 184.472 559.681 184.472 560.071 184.081C560.462 183.691 560.462 183.057 560.071 182.667L554.414 177.01L560.071 171.353C560.462 170.963 560.462 170.329 560.071 169.939C559.681 169.548 559.047 169.548 558.657 169.939L552.293 176.303ZM571.028 177.01V176.01H553V177.01V178.01H571.028V177.01Z" fill="black"/>
+<svg width="602" height="611" viewBox="0 0 602 611" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="602" height="611" fill="#DAD0D0"/>
+<rect x="96.5" y="0.5" width="177" height="172" fill="#BDAFED" stroke="black"/>
+<rect x="357.5" y="0.5" width="177" height="172" fill="#BDAFED" stroke="black"/>
+<rect x="95.5" y="329.5" width="179" height="281" fill="#BDAFED" stroke="black"/>
+<rect x="522.5" y="209.5" width="79" height="128" fill="#80B17A" stroke="black"/>
+<rect x="527" y="238" width="70" height="70" fill="url(#pattern0_0_1)"/>
+<path d="M508.735 299.707C509.125 299.317 509.125 298.683 508.735 298.293L502.371 291.929C501.98 291.538 501.347 291.538 500.957 291.929C500.566 292.319 500.566 292.953 500.957 293.343L506.614 299L500.957 304.657C500.566 305.047 500.566 305.681 500.957 306.071C501.347 306.462 501.98 306.462 502.371 306.071L508.735 299.707ZM490 299V300H508.028V299V298H490V299Z" fill="black"/>
+<path d="M64.7071 256.707C65.0976 256.317 65.0976 255.683 64.7071 255.293L58.3431 248.929C57.9526 248.538 57.3195 248.538 56.9289 248.929C56.5384 249.319 56.5384 249.953 56.9289 250.343L62.5858 256L56.9289 261.657C56.5384 262.047 56.5384 262.681 56.9289 263.071C57.3195 263.462 57.9526 263.462 58.3431 263.071L64.7071 256.707ZM0 256L4.40979e-10 257L64 257L64 256L64 255L-4.40979e-10 255L0 256Z" fill="black"/>
+<path d="M489.293 247.293C488.902 247.683 488.902 248.317 489.293 248.707L495.657 255.071C496.047 255.462 496.681 255.462 497.071 255.071C497.462 254.681 497.462 254.047 497.071 253.657L491.414 248L497.071 242.343C497.462 241.953 497.462 241.319 497.071 240.929C496.681 240.538 496.047 240.538 495.657 240.929L489.293 247.293ZM508.028 248V247H490V248V249H508.028V248Z" fill="black"/>
 <defs>
 <pattern id="pattern0_0_1" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_0_1" transform="scale(0.00166667)"/>

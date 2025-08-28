@@ -312,6 +312,35 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+// ---- ADMIN: supprimer un collaborateur et toutes ses réservations ----
+app.delete('/api/admin/users/:id', async (req, res) => {
+  const { admin_user_id } = req.body;
+  const userId = Number(req.params.id);
+
+  if (!admin_user_id) return res.status(400).json({ error: 'admin_user_id requis' });
+
+  try {
+    const roleRes = await db.query('SELECT role FROM users WHERE id = $1', [admin_user_id]);
+    if (!roleRes.rows.length || roleRes.rows[0].role !== 'admin') {
+      return res.status(403).json({ error: 'Réservé aux admins' });
+    }
+
+    // Vérifie le rôle de la personne qu’on veut supprimer
+    const targetRes = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    if (!targetRes.rows.length) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (targetRes.rows[0].role === 'admin') {
+      return res.status(403).json({ error: 'Impossible de supprimer un admin' });
+    }
+
+    await db.query('DELETE FROM bookings WHERE user_id = $1;', [userId]);
+    await db.query('DELETE FROM users WHERE id = $1;', [userId]);
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erreur lors de la suppression de l'utilisateur" });
+  }
+});
 
 // ---- START ----
 const PORT = process.env.PORT || 3001;

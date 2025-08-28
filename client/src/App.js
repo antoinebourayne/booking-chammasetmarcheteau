@@ -12,6 +12,7 @@ import {
   deleteDeskAdmin,
   fetchAllUsers,
   addUser,
+  deleteUserAdmin
 } from './services/api';
 
 import Sidebar from './components/Sidebar';
@@ -56,6 +57,11 @@ function App() {
   const [desks, setDesks] = useState([]);
   const [selectedDesk, setSelectedDesk] = useState(null);
   const [currentFloor, setCurrentFloor] = useState('ballu5_r2');
+  const [showReserveDays, setShowReserveDays] = useState(false);
+  const [reserveDaysDeskId, setReserveDaysDeskId] = useState(null);
+  const [reserveDaysCount, setReserveDaysCount] = useState(10);
+  const [reserveTargetName, setReserveTargetName] = useState(null); // pour admin
+
 
   // Popup collaborateurs
   const [showCollaborators, setShowCollaborators] = useState(false);
@@ -220,44 +226,74 @@ function App() {
     }
   };
 
-  const handleBookingSixMonths = async (deskId, targetName) => {
-    if (!currentUser) return;
+  const handleDeleteUser = async (userId) => {
+    if (!currentUser || currentUser.role !== 'admin') return;
+    if (!window.confirm('Supprimer ce collaborateur et toutes ses réservations ?')) return;
   
     try {
-      // Détermine l'user cible : soi-même, ou (admin) le collaborateur saisi
+      await deleteUserAdmin(userId, currentUser.id);
+      const res = await fetchAllUsers();
+      setCollaborators(res.data || []);
+    } catch (e) {
+      console.error(e);
+      alert("Suppression impossible");
+    }
+  };  
+
+  const openReserveDays = (deskId, targetName = null) => {
+    console.log('[App] openReserveDays', { deskId, targetName });
+    setReserveDaysDeskId(deskId);
+    setReserveTargetName(targetName); // si admin, le nom saisi dans la bulle
+    setReserveDaysCount(10);
+    setSelectedDesk(null);
+    setShowReserveDays(true);
+  };
+
+
+  const handleBookingXDays = async (deskId, days, targetName = null) => {
+    if (!currentUser) return;
+    const n = Math.max(1, Math.min(260, parseInt(days, 10) || 0)); // borne raisonnable
+
+    try {
+      // cible: user courant, ou (admin) le collaborateur saisi
       let targetUserId = currentUser.id;
       if (currentUser.role === 'admin' && targetName?.trim()) {
         const u = await getUserByName(targetName.trim());
         targetUserId = u.data.id;
       }
-  
+
       const start = new Date(selectedDate);
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 6);
-  
+      const limit = new Date(start);
+      limit.setFullYear(limit.getFullYear() + 1); // max 1 an
+
       const dates = [];
       const d = new Date(start);
-      while (d <= end) {
+      while (dates.length < n && d <= limit) {
         const day = d.getDay(); // 0=dim, 6=sam
         if (day !== 0 && day !== 6) dates.push(fmt(d));
         d.setDate(d.getDate() + 1);
       }
-  
+
+      if (dates.length < n) {
+        alert("Impossible de réserver au-delà d’un an : la période a été tronquée.");
+      }
+
       let ok = 0, ko = 0;
       for (const dateStr of dates) {
         try {
           await bookDesk(targetUserId, deskId, dateStr);
           ok++;
         } catch {
-          ko++; // conflit / déjà réservé => on continue
+          ko++;
         }
       }
-  
+
       await loadDesks();
-      alert(`Réservations sur ~6 mois : ${ok} créées, ${ko} ignorées (conflits/week-ends).`);
+      setShowReserveDays(false);
+      alert(`Réservations : ${ok} créées, ${ko} ignorées (conflits/week-ends/limite).`);
     } catch (err) {
       console.error(err);
-      alert("Réservation 6 mois impossible");
+      alert("Réservation X jours impossible");
     }
   };
 
@@ -351,7 +387,7 @@ function App() {
             onAdminDelete={handleAdminDelete}
             onAdminAssign={handleAdminAssign}
             onAdminRemoveDesk={handleAdminRemoveDesk}
-            handleBookingSixMonths={handleBookingSixMonths}
+            onOpenReserveDays={openReserveDays}
           />
         </div>
       </div>
@@ -420,7 +456,28 @@ function App() {
                   }}
                 >
                   <div style={{ fontWeight: 500 }}>{u.name}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ opacity: 0.7, fontSize: '0.9rem' }}>{u.email}</div>
+                  {/* Icône supprimer visible seulement si ce n’est PAS un admin */}
+                  {u.role !== 'admin' && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteUser(u.id); }}
+                      aria-label="Supprimer ce collaborateur"
+                      title="Supprimer"
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '1.1rem',
+                        lineHeight: 1,
+                        color: '#ef4444',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      🗑
+                    </button>
+                  )}
+                </div>
                 </div>
               ))}
 
@@ -468,7 +525,7 @@ function App() {
             <input
               value={newUserName}
               onChange={(e) => setNewUserName(e.target.value)}
-              placeholder="Nom"
+              placeholder="Initiales"
               style={{ padding: '0.5rem', border: '1px solid #ddd', borderRadius: '8px' }}
             />
             <input
@@ -499,6 +556,47 @@ function App() {
           </div>
         </div>
       )}
+
+      {showReserveDays && (
+        <div
+          onClick={() => setShowReserveDays(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20000
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 'min(380px, 95vw)', background: 'white', borderRadius: '12px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.25)', padding: '16px',
+              display: 'flex', flexDirection: 'column', gap: '10px'
+            }}
+          >
+            <div style={{ fontWeight: 'bold' }}>Réserver X jours ouvrés</div>
+            <input
+              type="number"
+              min={1}
+              max={260}
+              value={reserveDaysCount}
+              onChange={(e) => setReserveDaysCount(e.target.value)}
+              placeholder="Nombre de jours (max ≈ 260)"
+              style={{ padding: '0.5rem', border: '1px solid #ddd', borderRadius: '8px' }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
+              <button onClick={() => setShowReserveDays(false)} style={{ padding: '6px 10px' }}>Annuler</button>
+              <button
+                onClick={() => handleBookingXDays(reserveDaysDeskId, reserveDaysCount, reserveTargetName)}
+                style={{ padding: '6px 10px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }
