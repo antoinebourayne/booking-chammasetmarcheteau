@@ -7,6 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const corsOptions = {
+  // origin: 'http://localhost:3000'
+  origin: 'http://resaballu.fr'
+};
+
 // ---- AUTH ----
 app.post('/api/login', async (req, res) => {
   const { name } = req.body;
