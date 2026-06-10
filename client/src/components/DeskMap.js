@@ -138,7 +138,7 @@ function DeskMap({
               position: 'absolute',
               top: desk.top,
               left: desk.left,
-              width: 'clamp(20px, 6%, 52px)',
+              width: 'clamp(20px, 5vh, 52px)',
               aspectRatio: '1 / 1',
               zIndex: isSelected ? 9998 : (isAdmin && dragState?.deskId === desk.desk_id ? 20 : 5),
             }}
