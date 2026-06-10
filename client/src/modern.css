@@ -1,5 +1,10 @@
 
-/* ===== Modern Desk Booking UI â€“ lightweight design system ===== */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ===== Modern Desk Booking UI â€” lightweight design system ===== */
 :root{
   --bg: #0b1020;
   --bg-elev: #0f1428;

@@ -104,7 +104,7 @@ function DeskMap({
         aspectRatio: svgRatio != null ? String(svgRatio) : '798 / 752',
         margin: '0 auto',
         overflow: 'hidden',
-        backgroundColor: '#F5EFE6',
+        backgroundColor: 'transparent',
         borderRadius: '12px',
         boxShadow: '0 0 0 1px rgba(201,168,76,0.18), 0 24px 60px rgba(0,0,0,0.7)',
         userSelect: isAdmin && dragState ? 'none' : 'auto',

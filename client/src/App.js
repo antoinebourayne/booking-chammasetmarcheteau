@@ -71,6 +71,64 @@ const LegendDot = ({ color, label }) => (
   </div>
 );
 
+const TOAST_ICONS = {
+  error:   '✕',
+  success: '✓',
+  info:    'ℹ',
+  warning: '⚠',
+};
+const TOAST_COLORS = {
+  error:   { bg: '#4a1a1a', border: '#c0392b', icon: '#e74c3c' },
+  success: { bg: '#1a3a2a', border: '#27ae60', icon: '#2ecc71' },
+  info:    { bg: '#1a2a3a', border: 'var(--accent)', icon: 'var(--accent)' },
+  warning: { bg: '#3a2e10', border: '#e67e22', icon: '#f39c12' },
+};
+
+function Toast({ toast, onClose }) {
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(onClose, 4000);
+    return () => clearTimeout(t);
+  }, [toast, onClose]);
+
+  if (!toast) return null;
+  const c = TOAST_COLORS[toast.type] || TOAST_COLORS.info;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '1.5rem',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 2000,
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      background: c.bg,
+      border: `1px solid ${c.border}`,
+      borderRadius: 'var(--radius-lg)',
+      boxShadow: 'var(--shadow-lg)',
+      padding: '0.7rem 1.1rem',
+      minWidth: '260px',
+      maxWidth: 'min(480px, 90vw)',
+      animation: 'toastIn 0.2s ease',
+    }}>
+      <span style={{ fontSize: '0.9rem', fontWeight: '700', color: c.icon, flexShrink: 0 }}>
+        {TOAST_ICONS[toast.type]}
+      </span>
+      <span style={{ flex: 1, fontSize: '0.88rem', color: '#ffffff', lineHeight: 1.4 }}>
+        {toast.message}
+      </span>
+      <button
+        onClick={onClose}
+        style={{ background: 'none', border: 'none', color: 'var(--text-3)', cursor: 'pointer', fontSize: '1rem', padding: '0 0 0 4px', lineHeight: 1 }}
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [nameInput, setNameInput] = useState('');
@@ -88,6 +146,9 @@ function App() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
+
+  const [toast, setToast] = useState(null);
+  const showToast = (message, type = 'error') => setToast({ message, type });
 
   const visibleDesks = desks.filter(d => d.location === currentFloor);
   const fallbackLayout = deskLayouts[currentFloor] || [];
@@ -107,7 +168,7 @@ function App() {
       setCurrentUser(res.data);
     } catch (err) {
       console.error(err);
-      alert('Login failed');
+      showToast('Connexion impossible');
     }
   };
 
@@ -124,7 +185,7 @@ function App() {
       await loadDesks();
     } catch (err) {
       console.error(err);
-      alert('Impossible de réserver');
+      showToast('Impossible de réserver');
     }
   };
 
@@ -135,7 +196,7 @@ function App() {
       await loadDesks();
     } catch (err) {
       console.error(err);
-      alert('Suppression impossible');
+      showToast('Suppression impossible');
     }
   };
 
@@ -146,7 +207,7 @@ function App() {
       await loadDesks();
     } catch (err) {
       console.error(err);
-      alert("Mise à jour de position impossible");
+      showToast("Mise à jour de position impossible");
     }
   };
 
@@ -157,7 +218,7 @@ function App() {
       await loadDesks();
     } catch (err) {
       console.error(err);
-      alert("Libération (admin) impossible");
+      showToast("Libération (admin) impossible");
     }
   };
 
@@ -174,7 +235,7 @@ function App() {
         (err?.response?.status === 404 ? "Utilisateur non trouvé" : null) ||
         err?.message ||
         "Erreur inconnue";
-      alert(`Assignment impossible : ${apiMsg}`);
+      showToast(`Assignment impossible : ${apiMsg}`);
     }
   };
 
@@ -187,7 +248,7 @@ function App() {
       if (newId) setSelectedDesk(newId);
     } catch (err) {
       console.error(err);
-      alert("Création de place impossible");
+      showToast("Création de place impossible");
     }
   };
 
@@ -199,7 +260,7 @@ function App() {
       setSelectedDesk(null);
     } catch (err) {
       console.error(err);
-      alert("Suppression de la place impossible");
+      showToast("Suppression de la place impossible");
     }
   };
 
@@ -210,13 +271,13 @@ function App() {
       setShowCollaborators(true);
     } catch (e) {
       console.error(e);
-      alert("Impossible de charger les collaborateurs");
+      showToast("Impossible de charger les collaborateurs");
     }
   };
 
   const handleAddUser = async () => {
     if (!newUserName.trim() || !newUserEmail.trim()) {
-      alert("Nom et email requis");
+      showToast("Nom et email requis", 'warning');
       return;
     }
     try {
@@ -230,7 +291,7 @@ function App() {
       }
     } catch (e) {
       console.error(e);
-      alert("Impossible d'ajouter ce collaborateur");
+      showToast("Impossible d'ajouter ce collaborateur");
     }
   };
 
@@ -243,7 +304,7 @@ function App() {
       setCollaborators(res.data || []);
     } catch (e) {
       console.error(e);
-      alert("Suppression impossible");
+      showToast("Suppression impossible");
     }
   };
 
@@ -274,17 +335,17 @@ function App() {
         if (day !== 0 && day !== 6) dates.push(fmt(d));
         d.setDate(d.getDate() + 1);
       }
-      if (dates.length < n) alert("Impossible de réserver au-delà d'un an : la période a été tronquée.");
+      if (dates.length < n) showToast("Impossible de réserver au-delà d'un an : la période a été tronquée.", 'warning');
       let ok = 0, ko = 0;
       for (const dateStr of dates) {
         try { await bookDesk(targetUserId, deskId, dateStr); ok++; } catch { ko++; }
       }
       await loadDesks();
       setShowReserveDays(false);
-      alert(`Réservations : ${ok} créées, ${ko} ignorées (conflits/week-ends/limite).`);
+      showToast(`Réservations : ${ok} créées, ${ko} ignorées (conflits/week-ends/limite).`, ok > 0 ? 'success' : 'warning');
     } catch (err) {
       console.error(err);
-      alert("Réservation X jours impossible");
+      showToast("Réservation X jours impossible");
     }
   };
 
@@ -621,6 +682,7 @@ function App() {
           </div>
         </div>
       )}
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }
