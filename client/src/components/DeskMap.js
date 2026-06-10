@@ -5,6 +5,7 @@ function DeskMap({
   desks,
   layout,
   floorImage,
+  svgRatio,
   currentUser,
   selectedDesk,
   setSelectedDesk,
@@ -28,7 +29,6 @@ function DeskMap({
   };
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
-  // Clique "fond de carte" => fermer la bulle
   const handleBackgroundClick = () => {
     if (selectedDesk != null) setSelectedDesk(null);
   };
@@ -38,22 +38,18 @@ function DeskMap({
     const container = containerRef.current;
     if (!container) return;
 
-    // Ne pas propager pour éviter de déclencher handleBackgroundClick
     e.stopPropagation();
 
     const rect = container.getBoundingClientRect();
     const deskTop = pctToNum(desk.top) / 100 * rect.height;
     const deskLeft = pctToNum(desk.left) / 100 * rect.width;
 
-    const startX = e.clientX;
-    const startY = e.clientY;
-
     setDragState({
       deskId: desk.desk_id,
-      startX,
-      startY,
+      startX: e.clientX,
+      startY: e.clientY,
       startTopPx: deskTop,
-      startLeftPx: deskLeft
+      startLeftPx: deskLeft,
     });
   }, [isAdmin]);
 
@@ -66,15 +62,13 @@ function DeskMap({
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
 
-    let newTopPx = clamp(dragState.startTopPx + dy, 0, rect.height);
-    let newLeftPx = clamp(dragState.startLeftPx + dx, 0, rect.width);
+    const newTopPx = clamp(dragState.startTopPx + dy, 0, rect.height);
+    const newLeftPx = clamp(dragState.startLeftPx + dx, 0, rect.width);
 
     const ghost = container.querySelector(`[data-desk-ghost="${dragState.deskId}"]`);
     if (ghost) {
-      const topPct = (newTopPx / rect.height) * 100;
-      const leftPct = (newLeftPx / rect.width) * 100;
-      ghost.style.top = `${topPct}%`;
-      ghost.style.left = `${leftPct}%`;
+      ghost.style.top = `${(newTopPx / rect.height) * 100}%`;
+      ghost.style.left = `${(newLeftPx / rect.width) * 100}%`;
     }
   }, [dragState]);
 
@@ -87,16 +81,11 @@ function DeskMap({
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
 
-    let newTopPx = clamp(dragState.startTopPx + dy, 0, rect.height);
-    let newLeftPx = clamp(dragState.startLeftPx + dx, 0, rect.width);
-
-    const topPct = +((newTopPx / rect.height) * 100).toFixed(2);
-    const leftPct = +((newLeftPx / rect.width) * 100).toFixed(2);
+    const topPct = +((clamp(dragState.startTopPx + dy, 0, rect.height) / rect.height) * 100).toFixed(2);
+    const leftPct = +((clamp(dragState.startLeftPx + dx, 0, rect.width) / rect.width) * 100).toFixed(2);
 
     if (isAdmin && typeof onDeskPositionChange === 'function') {
-      try {
-        await onDeskPositionChange(dragState.deskId, topPct, leftPct);
-      } catch {}
+      try { await onDeskPositionChange(dragState.deskId, topPct, leftPct); } catch {}
     }
 
     setDragState(null);
@@ -108,18 +97,18 @@ function DeskMap({
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      onClick={handleBackgroundClick}  
+      onClick={handleBackgroundClick}
       style={{
         position: 'relative',
-        width: '100%',
-        maxWidth: '1000px',
-        height: '80vh',
+        width: `min(100%, 960px, calc(82vh * ${svgRatio || 798 / 752}))`,
+        aspectRatio: svgRatio != null ? String(svgRatio) : '798 / 752',
         margin: '0 auto',
-        paddingTop: '0.5rem',
         overflow: 'hidden',
-        backgroundColor: '#DAD0D0',
+        backgroundColor: '#F5EFE6',
+        borderRadius: '12px',
+        boxShadow: '0 0 0 1px rgba(201,168,76,0.18), 0 24px 60px rgba(0,0,0,0.7)',
         userSelect: isAdmin && dragState ? 'none' : 'auto',
-        cursor: isAdmin ? (dragState ? 'grabbing' : 'grab') : 'default'
+        cursor: isAdmin ? (dragState ? 'grabbing' : 'grab') : 'default',
       }}
     >
       {children}
@@ -131,8 +120,9 @@ function DeskMap({
           inset: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'contain',
-          pointerEvents: 'none'
+          objectFit: 'fill',
+          pointerEvents: 'none',
+          opacity: 1,
         }}
       />
 
@@ -140,24 +130,18 @@ function DeskMap({
         const isSelected = selectedDesk === desk.desk_id;
         const userName = desk.user?.name;
 
-        const wrapperStyle = {
-          position: 'absolute',
-          top: desk.top,
-          left: desk.left,
-          width: '6vw',
-          height: '6vw',
-          minWidth: '28px',
-          minHeight: '28px',
-          maxWidth: '50px',
-          maxHeight: '50px',
-          zIndex: (isSelected ? 9998 : (isAdmin && dragState?.deskId === desk.desk_id ? 20 : 5))
-        };
-
         return (
           <div
             key={desk.desk_id}
             data-desk-ghost={desk.desk_id}
-            style={wrapperStyle}
+            style={{
+              position: 'absolute',
+              top: desk.top,
+              left: desk.left,
+              width: 'clamp(20px, 6%, 52px)',
+              aspectRatio: '1 / 1',
+              zIndex: isSelected ? 9998 : (isAdmin && dragState?.deskId === desk.desk_id ? 20 : 5),
+            }}
             onMouseDown={(e) => onMouseDownDesk(e, desk)}
             onClick={(e) => e.stopPropagation()}
           >
