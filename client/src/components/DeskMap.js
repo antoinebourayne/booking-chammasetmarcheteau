@@ -21,6 +21,7 @@ function DeskMap({
 }) {
   const containerRef = useRef(null);
   const [dragState, setDragState] = useState(null);
+  const draggedRef = useRef(false);
 
   const pctToNum = (s) => {
     if (typeof s === 'string' && s.endsWith('%')) return parseFloat(s.slice(0, -1)) || 0;
@@ -39,6 +40,7 @@ function DeskMap({
     if (!container) return;
 
     e.stopPropagation();
+    draggedRef.current = false;
 
     const rect = container.getBoundingClientRect();
     const deskTop = pctToNum(desk.top) / 100 * rect.height;
@@ -61,6 +63,8 @@ function DeskMap({
 
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
+
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) draggedRef.current = true;
 
     const newTopPx = clamp(dragState.startTopPx + dy, 0, rect.height);
     const newLeftPx = clamp(dragState.startLeftPx + dx, 0, rect.width);
@@ -151,7 +155,10 @@ function DeskMap({
               userName={userName}
               currentUser={currentUser}
               isSelected={isSelected}
-              onSelect={setSelectedDesk}
+              onSelect={(id) => {
+                if (draggedRef.current) { draggedRef.current = false; return; }
+                setSelectedDesk(id);
+              }}
               onBook={handleBooking}
               onDelete={handleDelete}
               isAdmin={isAdmin}
